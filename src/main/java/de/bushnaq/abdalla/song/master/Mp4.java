@@ -4,10 +4,6 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.mp4parser.IsoFile;
-
-import com.mpatric.mp3agic.Mp3File;
-
 import de.bushnaq.abdalla.song.master.timeline.Song;
 
 public class Mp4 {

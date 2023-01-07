@@ -6,8 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 class StdxReader extends Thread {
-	BufferedReader	ibr;
-	private boolean	useStderr;
+	private BufferedReader	ibr;
+	private boolean			useStderr;
 
 	public StdxReader(InputStream is, boolean useStderr) {
 		InputStreamReader isr = new InputStreamReader(is);
@@ -16,6 +16,7 @@ class StdxReader extends Thread {
 		start();// start the thread
 	}
 
+	@Override
 	public void run() {
 		try {
 			String line;

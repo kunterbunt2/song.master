@@ -4,7 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandExecuter {
-	static List<StdxReader> readers = new ArrayList<>();
+	static private List<StdxReader> readers = new ArrayList<>();
+
+	public static void close() throws InterruptedException {
+		System.out.println("waiting for all threads to terminate...");
+		for (StdxReader reader : readers) {
+			reader.join();// wait for thread to terminate
+		}
+	}
 
 	public static void execute(String[] command) throws Exception {
 		ProcessBuilder	pb	= new ProcessBuilder();
@@ -21,13 +28,6 @@ public class CommandExecuter {
 		if (exitVal != 0)
 			throw new Exception("error in executing command");
 
-	}
-
-	public static void close() throws InterruptedException {
-		System.out.println("waiting for all threads to terminate...");
-		for (StdxReader reader : readers) {
-			reader.join();// wait for thread to terminate
-		}
 	}
 
 //	public static void execute(String[] command) throws Exception {

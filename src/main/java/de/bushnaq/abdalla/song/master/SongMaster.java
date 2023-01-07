@@ -5,20 +5,32 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import de.bushnaq.abdalla.song.master.timeline.Album;
 import de.bushnaq.abdalla.song.master.timeline.AlbumList;
 import de.bushnaq.abdalla.song.master.timeline.Song;
 import de.bushnaq.abdalla.song.master.timeline.Timeline;
 import de.bushnaq.abdalla.song.master.util.Util;
 
+@Component
+@Scope("prototype")
 public class SongMaster {
-
-	public static void main(String[] args) throws Exception {
-		SongMaster main = new SongMaster();
-		main.start();
-	}
-
-	AlbumList albumList = new AlbumList();
+	private AlbumList	albumList	= new AlbumList();
+	@Value("${song.master.audio.directory}")
+	private String		audioDirectory;
+	@Value("${song.master.generate.mp4}")
+	private boolean		generateMp4;
+	@Value("${song.master.generate.wave.png}")
+	private boolean		generateWavePng;
+	@Value("${song.master.handle.mp3}")
+	private boolean		handleMp3;
+	@Value("${song.master.html.directory}")
+	private String		htmlDirectory;
+	@Value("${song.master.image.directory}")
+	private String		imageDirectory;
 
 	public Map<String, String> generateMap(String directory, String exclude, String extension) {
 		Map<String, String>	songMap		= new HashMap<>();
@@ -52,15 +64,15 @@ public class SongMaster {
 
 	private void handleSong(String audioDirectory, Song song) throws Exception {
 		song.logMessage("");
-		new Mp3(audioDirectory).updateMp3(song);
-		new WavePng(audioDirectory).generate(song);
-		new Mp4(audioDirectory).generate(song);
+		if (handleMp3)
+			new Mp3(audioDirectory).updateMp3(song);
+		if (generateWavePng)
+			new WavePng(audioDirectory).generate(song);
+		if (generateMp4)
+			new Mp4(audioDirectory).generate(song);
 	}
 
-	private void start() throws Exception {
-		String	audioDirectory	= "C:/data/abdalla.bushnaq.de/sites/fileadmin/audio";
-		String	imageDirectory	= "C:/data/abdalla.bushnaq.de/sites/fileadmin/images";
-		String	htmlDirectory	= "C:/data/abdalla.bushnaq.de/sites/fileadmin/html";
+	void start() throws Exception {
 		testAllSongsInAlbumeListExistOnHdd(audioDirectory);
 		testAllSongsOnHddExistInAlbumList(audioDirectory);
 		handleAllSongs(audioDirectory);
@@ -106,9 +118,9 @@ public class SongMaster {
 //			System.out.println("/*-----------------------------------------------------------------");
 			System.out.println("test if all songs in the album list exist on HDD");
 //			System.out.println("-----------------------------------------------------------------*/");
-			Map<String, String>	wavMap	= generateWaveMap(audioDirectory);
-			Map<String, String>	mp3Map	= generateMp3Map(audioDirectory);
-			String				root	= audioDirectory;
+//			Map<String, String>	wavMap	= generateWaveMap(audioDirectory);
+			Map<String, String> mp3Map = generateMp3Map(audioDirectory);
+//			String				root	= audioDirectory;
 			albumList.sort(Comparator.comparing(Album::getName));
 			for (Album album : albumList) {
 				String albumName = album.name;

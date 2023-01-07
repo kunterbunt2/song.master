@@ -25,20 +25,20 @@ public class WaveGenerator {
 	// private Color textBackgroundColor = Color.black;
 	// private Color nameTextColor=Color.red;
 	// dark color
-	private Color	backgroundColor		= new Color(0x191919);
-	Graphics2D		graphics;
-	BufferedImage	image;
-	int				imageHeight			= 84;
-	int				imageWidth			= 950;
-	private Color	lowerBarColor		= new Color(0x555555);
-	private Color	lowerSeparatorColor	= new Color(0x202020);
-	Font			monthFont			= new Font("Arial", Font.PLAIN, 10);
-	private Color	nameTextColor		= new Color(0x48a0f7);
-	private Color	textBackgroundColor	= Color.black;
-	private Color	textColor			= new Color(0x48a0f7);				// new Color(0xd8d8d8);
-	private Color	upperBarColor		= new Color(0xc0c0c0);
+	private Color			backgroundColor		= new Color(0x191919);
+	private Graphics2D		graphics;
+	private BufferedImage	image;
+	private int				imageHeight			= 84;
+	private int				imageWidth			= 950;
+	private Color			lowerBarColor		= new Color(0x555555);
+	private Color			lowerSeparatorColor	= new Color(0x202020);
+	private Font			monthFont			= new Font("Arial", Font.PLAIN, 10);
+	private Color			nameTextColor		= new Color(0x48a0f7);
+	private Color			textBackgroundColor	= Color.black;
+	private Color			textColor			= new Color(0x48a0f7);				// new Color(0xd8d8d8);
+	private Color			upperBarColor		= new Color(0xc0c0c0);
 
-	private Color	upperSeparatorColor	= new Color(0x282828);
+	private Color			upperSeparatorColor	= new Color(0x282828);
 
 	private void drawLowerBar(int x, int cy, int y) {
 		// y = y*2 / 5;

@@ -37,6 +37,10 @@ public class AlbumList extends ArrayList<Album> {
 					"https://abdalla.bushnaq.de/wp/home/12-vox-machina/02-the-soul-door/"));
 			album.add(new Song(album, "03-I shut down", Genre.POP, new GregorianCalendar(2022, Calendar.NOVEMBER, 23), new GregorianCalendar(2022, Calendar.DECEMBER, 24),
 					"https://abdalla.bushnaq.de/wp/home/12-vox-machina/03-i-shut-down/"));
+			album.add(new Song(album, "04-it was love", Genre.POP, new GregorianCalendar(2022, Calendar.NOVEMBER, 4), new GregorianCalendar(2023, Calendar.JANUARY, 1),
+					"https://abdalla.bushnaq.de/wp/home/12-vox-machina/04-it-was-love/"));
+			album.add(new Song(album, "05-when I grew up", Genre.POP, new GregorianCalendar(2022, Calendar.NOVEMBER, 5), new GregorianCalendar(2023, Calendar.JANUARY, 1),
+					"https://abdalla.bushnaq.de/wp/home/12-vox-machina/05-when-i-grew-up/"));
 		}
 		{
 			// 11-Pandemus

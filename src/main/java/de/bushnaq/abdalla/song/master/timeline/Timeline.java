@@ -46,7 +46,7 @@ public class Timeline {
 	private static final Color			COLOR_DARK_GRAY				= new Color(64, 64, 64);
 
 	private static final Color			COLOR_DARK_ORANGE			= new Color(238, 124, 8);
-	private static final Color			COLOR_DARK_RED				= new Color(0xc1392b);
+//	private static final Color			COLOR_DARK_RED				= new Color(0xc1392b);
 	private static final long			ONE_DAY_MILLIS				= 1000 * 60 * 60 * 24;
 	private static final long			ONE_MONTH_MILLLI_SECONDS	= 1000 * 60 * 60 * 24 * 31l;
 	private static final int			SONG_DISTANCE				= 128;
@@ -113,15 +113,15 @@ public class Timeline {
 		graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-		SimpleDateFormat	formatter	= new SimpleDateFormat("dd-MMM-yyyy");
+//		SimpleDateFormat	formatter	= new SimpleDateFormat("dd-MMM-yyyy");
 //		System.out.println(album.name);
 //		System.out.println("\t start=" + formatter.format(album.start.getTime()));
 //		System.out.println("\t end=" + formatter.format(album.end.getTime()));
 //		System.out.println("\t lastStart=" + formatter.format(album.lastStart.getTime()));
 //		System.out.println("\t firstEnd=" + formatter.format(album.firstEnd.getTime()));
-		int					startY		= calculateStartY(y, album, albumList);
-		int					endY		= calculateEndY(y, album, albumList);
-		Color				color		= new Color(album.color.getRed(), album.color.getGreen(), album.color.getBlue(), 196);
+		int		startY	= calculateStartY(y, album, albumList);
+		int		endY	= calculateEndY(y, album, albumList);
+		Color	color	= new Color(album.color.getRed(), album.color.getGreen(), album.color.getBlue(), 196);
 		graphics.setColor(color);
 
 		int	mapX1	= x;
@@ -183,7 +183,7 @@ public class Timeline {
 		graphics.fillRect(x - 1, 0, 2, imageHeight);
 		Calendar thisMonth = new GregorianCalendar();
 		thisMonth.setTime(album.firstEnd);
-		Date d = thisMonth.getTime();
+//		Date d = thisMonth.getTime();
 		thisMonth.set(Calendar.DAY_OF_MONTH, 1);
 		for (; thisMonth.getTime().before(album.end); thisMonth.add(Calendar.MONTH, 1)) {
 			int delta = zoom((thisMonth.getTimeInMillis() - album.firstEnd.getTime()) / ONE_DAY_MILLIS);
