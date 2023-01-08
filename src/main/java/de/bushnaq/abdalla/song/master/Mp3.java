@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Genres;
 import com.mpatric.mp3agic.ID3v2;
@@ -11,15 +15,19 @@ import com.mpatric.mp3agic.Mp3File;
 
 import de.bushnaq.abdalla.song.master.timeline.Song;
 
+@Component
+@Scope("prototype")
 public class Mp3 {
-	private static final String	MP3_META_DATA_ALBUM_ARTIST	= "Abdalla Bushnaq";
-	private static final String	MP3_META_DATA_ARTIST		= "Abdalla Bushnaq";
-	private static final String	MP3_META_DATA_COMPOSER		= "Abdalla Bushnaq";
+	@Value("${song.master.album.artist}")
+	private String	albumArtist;
+	@Value("${song.master.artist}")
+	private String	artist;
+	@Value("${song.master.audio.directory}")
+	private String	audioDirectory;
+	@Value("${song.master.composer}")
+	private String	composer;
 
-	private String				audioDirectory;
-
-	public Mp3(String audioDirectory) {
-		this.audioDirectory = audioDirectory;
+	public Mp3() {
 	}
 
 	void updateMp3(Song song) throws Exception {
@@ -53,19 +61,19 @@ public class Mp3 {
 				song.logMessage(String.format("mismatching title detected in mp3 file, expected %s found %s", song.name, title));
 			}
 			String artist = id3v2Tag.getArtist();
-			if (artist == null || !artist.equals(MP3_META_DATA_ARTIST)) {
+			if (artist == null || !artist.equals(artist)) {
 				metadataExists = false;
-				song.logMessage(String.format("mismatching artist detected in mp3 file, expected %s found %s", MP3_META_DATA_ARTIST, artist));
+				song.logMessage(String.format("mismatching artist detected in mp3 file, expected %s found %s", artist, artist));
 			}
 			String albumArtist = id3v2Tag.getAlbumArtist();
-			if (albumArtist == null || !albumArtist.equals(MP3_META_DATA_ALBUM_ARTIST)) {
+			if (albumArtist == null || !albumArtist.equals(albumArtist)) {
 				metadataExists = false;
-				song.logMessage(String.format("mismatching album artist detected in mp3 file, expected %s found %s", MP3_META_DATA_ALBUM_ARTIST, albumArtist));
+				song.logMessage(String.format("mismatching album artist detected in mp3 file, expected %s found %s", albumArtist, albumArtist));
 			}
 			String composer = id3v2Tag.getComposer();
-			if (composer == null || !composer.equals(MP3_META_DATA_COMPOSER)) {
+			if (composer == null || !composer.equals(composer)) {
 				metadataExists = false;
-				song.logMessage(String.format("mismatching composer detected in mp3 file, expected %s found %s", MP3_META_DATA_COMPOSER, composer));
+				song.logMessage(String.format("mismatching composer detected in mp3 file, expected %s found %s", composer, composer));
 			}
 			String album = id3v2Tag.getAlbum();
 			if (album == null || !album.equals(song.album.getName())) {
@@ -92,25 +100,13 @@ public class Mp3 {
 		}
 		if (!metadataExists) {
 			song.logMessage("assign metatags to mp3 file");
-//			String[] command = { "ffmpeg", "-y", "-i", mp3FileName, "-c", "copy", //
-//					"-map_metadata", "-1", // remove all metadata
-//					"-metadata", "title=" + song.name, //
-//					"-metadata", "artist=Abdalla Bushnaq", //
-//					"-metadata", "album_artist=Abdalla Bushnaq", //
-//					"-metadata", "composer=Abdalla Bushnaq", //
-//					"-metadata", "album=" + song.album.getName(), //
-//					"-metadata", "date=" + releaseDate.get(Calendar.YEAR), //
-//					"-metadata", "track=" + song.track, //
-//					"-metadata", "genre=" + song.genre, //
-//					temp1Mp3FileName };
-//			CommandExecuter.execute(command);
 			ID3v1 id3v1Tag = mp3file.getId3v1Tag();
 			id3v1Tag.setYear("" + releaseDate.get(Calendar.YEAR));
 			ID3v2 id3v2Tag = mp3file.getId3v2Tag();
 			id3v2Tag.setTitle(song.name);
-			id3v2Tag.setArtist(MP3_META_DATA_ARTIST);
-			id3v2Tag.setAlbumArtist(MP3_META_DATA_ALBUM_ARTIST);
-			id3v2Tag.setComposer(MP3_META_DATA_COMPOSER);
+			id3v2Tag.setArtist(artist);
+			id3v2Tag.setAlbumArtist(albumArtist);
+			id3v2Tag.setComposer(composer);
 			id3v2Tag.setAlbum(song.album.getName());
 			id3v2Tag.setTrack(song.track);
 			id3v2Tag.setGenre(ID3v1Genres.matchGenreDescription(song.genre));

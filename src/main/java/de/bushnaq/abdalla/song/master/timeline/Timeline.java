@@ -28,36 +28,36 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.mpatric.mp3agic.Mp3File;
 
 import de.bushnaq.abdalla.song.master.util.Util;
 
+@Component
+@Scope("prototype")
 public class Timeline {
 	private static final int			CALENDAR_BUTTOM_SLACK		= 250;
 	private static final int			CALENDAR_TOP_SLACK			= 150;
-	// light mode
-	// private static final Color COLOR_DARK_CYAN = new Color(110, 207, 239);
-	// private static final Color COLOR_DARK_ORANGE = new Color(238, 124, 8);
-	// private static final Color COLOR_DARK_RED = new Color(0xc1392b);
-	// private static final Color COLOR_DARK_GRAY = new Color(64, 64, 64);
-	// dark mode
-	// private Color backgroundColor = new Color(0x191919);
 	private static final Color			COLOR_DARK_CYAN				= new Color(0x48a0f7);
 	private static final Color			COLOR_DARK_GRAY				= new Color(64, 64, 64);
-
 	private static final Color			COLOR_DARK_ORANGE			= new Color(238, 124, 8);
-//	private static final Color			COLOR_DARK_RED				= new Color(0xc1392b);
 	private static final long			ONE_DAY_MILLIS				= 1000 * 60 * 60 * 24;
 	private static final long			ONE_MONTH_MILLLI_SECONDS	= 1000 * 60 * 60 * 24 * 31l;
 	private static final int			SONG_DISTANCE				= 128;
 	BufferedImage						aImage;
-
 	Font								albumFont					= new Font("Arial", Font.PLAIN, zoom(64));
 	int									albumHeight;
 	int									calendarX					= 84;
 	private boolean						debug						= false;
+	@Value("${song.master.filter.directory}")
+	private String						filterDirectory;
 	Graphics2D							graphics;
 	int									imageHeight;
+	@Value("${song.master.image.root.url}")
+	private String						imageRootUrl;
 	int									imageWidth					= 500;
 	private Map<Integer, List<Album>>	laneToAlbumMap				= new TreeMap<>();
 	private Map<Integer, List<Song>>	laneToSongMap				= new TreeMap<>();
@@ -65,11 +65,7 @@ public class Timeline {
 	int									monthHeight;
 	Font								songFont					= new Font("Arial", Font.PLAIN, zoom(14));
 	int									songHeight;
-	// private int numberOfMonths;
-	// private int numberOfDays;
-	// private Song lastSong;
 	PrintWriter							writer;
-
 	Font								yearFont					= new Font("Arial", Font.BOLD, zoom(64));
 	int									yearHeight;
 	private float						zoom						= 4;
@@ -86,6 +82,11 @@ public class Timeline {
 
 	private int calculateStartY(int y, Album album, AlbumList albumList) {
 		return y - (int) (((album.start.getTime() - albumList.start.getTime()) / ONE_DAY_MILLIS) / getZoom());
+	}
+
+	private void clear() {
+		laneToAlbumMap.clear();
+		laneToSongMap.clear();
 	}
 
 	private void copyToMetaAlbum(AlbumList albumList, Album metaAlbum) {
@@ -350,7 +351,7 @@ public class Timeline {
 		graphics.setTransform(orig);
 	}
 
-	private int findFirstFreeLane(MyPeriod o) {
+	private int findFirstFreeLane(TimePeriod o) {
 		Date	oStartDate	= o.getStart();
 		Date	oEndDate	= o.getEnd();
 		if (oStartDate != null && oEndDate != null) {
@@ -359,7 +360,7 @@ public class Timeline {
 			// find
 			for (int laneId : asSortedList(laneToAlbumMap.keySet())) {
 				boolean overlapping = false;
-				for (MyPeriod p : laneToAlbumMap.get(laneId)) {
+				for (TimePeriod p : laneToAlbumMap.get(laneId)) {
 					Date	pStartDate	= p.getStart();
 					Date	pEndDate	= p.getEnd();
 					if (pStartDate != null && pEndDate != null) {
@@ -390,6 +391,7 @@ public class Timeline {
 	 * @throws UnsupportedEncodingException
 	 */
 	public void generateAlbumMap(String htmlOutputDirectory, String imageOutputDirectory) throws FileNotFoundException, UnsupportedEncodingException {
+		clear();
 		String imageFilenName = "album_map.png";
 		setZoom(4);
 		AlbumList albumList = new AlbumList();
@@ -399,7 +401,7 @@ public class Timeline {
 		int y = imageHeight - CALENDAR_BUTTOM_SLACK;
 		drawCalendar(albumList, 84, y);
 		writer = new PrintWriter(htmlOutputDirectory + "/" + "album_map.html", "UTF-8");
-		writer.println(String.format("<img src=\"https://abdalla.bushnaq.de/wp/wp-content/uploads/2022/12/%s\" usemap=\"#album_map\">", imageFilenName));
+		writer.println(String.format("<img src=\"" + imageRootUrl + "2022/12/%s\" usemap=\"#album_map\">", imageFilenName));
 		writer.println("<map name=\"album_map\">");
 		drawAlbums(84 + 32, y, albumList);
 		try {
@@ -419,6 +421,7 @@ public class Timeline {
 	 * @throws UnsupportedEncodingException
 	 */
 	public void generateMetaAlbumMap(String htmlOutputDirectory, String imageOutputDirectory) throws FileNotFoundException, UnsupportedEncodingException {
+		clear();
 		String		imageFilenName	= "meta_album_map.png";
 		AlbumList	albumList		= new AlbumList();
 		Album		metaAlbum		= new Album("meta", null);
@@ -429,7 +432,7 @@ public class Timeline {
 		// metaAlbum.list.size(), albumList.size()));
 		int y = imageHeight - CALENDAR_BUTTOM_SLACK;
 		writer = new PrintWriter(htmlOutputDirectory + "/" + "meta_album_map.html", "UTF-8");
-		writer.println(String.format("<img src=\"https://abdalla.bushnaq.de/wp/wp-content/uploads/2022/12/%s\" usemap=\"#meta_album_map\">", imageFilenName));
+		writer.println(String.format("<img src=\"" + imageRootUrl + "2022/12/%s\" usemap=\"#meta_album_map\">", imageFilenName));
 		writer.println("<map name=\"meta_album_map\">");
 		drawSongs(metaAlbum, calendarX, y);
 		drawCalendar(metaAlbum, calendarX, y);
@@ -444,7 +447,7 @@ public class Timeline {
 	}
 
 	public void generateSongMaps(Album album, String path, String albumName, String subName, String htmlOutputDirectory, String imageOutputDirectory) throws FileNotFoundException, UnsupportedEncodingException {
-
+		clear();
 		boolean success = true;
 		setZoom(1);
 		do {
@@ -458,12 +461,12 @@ public class Timeline {
 			if (subName != null) {
 				imageFilenName = albumName + "_" + subName + "_map.png";
 				writer = new PrintWriter(String.format(htmlOutputDirectory + "/" + "%s_%s_map.html", albumName, subName), "UTF-8");
-				writer.println(String.format("<img src=\"https://abdalla.bushnaq.de/wp/wp-content/uploads/%s\" usemap=\"#%s_%s_map\">", imageFilenName, albumName, subName));
+				writer.println(String.format("<img src=\"" + imageRootUrl + "%s\" usemap=\"#%s_%s_map\">", imageFilenName, albumName, subName));
 				writer.println(String.format("<map name=\"%s_%s_map\">", albumName, subName));
 			} else {
 				imageFilenName = albumName + "_map.png";
 				writer = new PrintWriter(String.format(htmlOutputDirectory + "/" + "%s_map.html", albumName), "UTF-8");
-				writer.println(String.format("<img src=\"https://abdalla.bushnaq.de/wp/wp-content/uploads/%s\" usemap=\"#%s_map\">", imageFilenName, albumName));
+				writer.println(String.format("<img src=\"" + imageRootUrl + "%s\" usemap=\"#%s_map\">", imageFilenName, albumName));
 				writer.println(String.format("<map name=\"%s_map\">", albumName));
 			}
 			success = drawSongs(album, calendarX, y);
@@ -483,6 +486,7 @@ public class Timeline {
 	}
 
 	public void generateStatistics(String audioDirectory) throws Exception {
+		clear();
 		AlbumList	albumList	= new AlbumList();
 		Album		metaAlbum	= new Album("meta", null);
 		copyToMetaAlbum(albumList, metaAlbum);
@@ -504,7 +508,7 @@ public class Timeline {
 		}
 		{
 			long	seconds		= 0;
-			File[]	allFiles	= Util.queryAllFiles(audioDirectory, "00-The_Lost_Tapes", ".mp3");
+			File[]	allFiles	= Util.queryAllFiles(audioDirectory, filterDirectory, ".mp3");
 			for (int i = 0; i < allFiles.length; i++) {
 				File	file	= allFiles[i];
 				Mp3File	mp3file	= new Mp3File(file.getAbsoluteFile());

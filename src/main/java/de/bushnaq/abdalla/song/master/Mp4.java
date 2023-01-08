@@ -4,14 +4,25 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import de.bushnaq.abdalla.song.master.timeline.Song;
 
+@Component
+@Scope("prototype")
 public class Mp4 {
+	@Value("${song.master.album.artist}")
+	private String	albumArtist;
+	@Value("${song.master.artist}")
+	private String	artist;
+	@Value("${song.master.audio.directory}")
+	private String	audioDirectory;
+	@Value("${song.master.composer}")
+	private String	composer;
 
-	private String audioDirectory;
-
-	public Mp4(String audioDirectory) {
-		this.audioDirectory = audioDirectory;
+	public Mp4() {
 	}
 
 	public void generate(Song song) throws Exception {
@@ -61,9 +72,9 @@ public class Mp4 {
 				String[] command = { "ffmpeg", "-y", "-i", mp4FileName, "-c", "copy", //
 						"-map_metadata", "-1", // remove all metadata
 						"-metadata", "title=" + song.name, //
-						"-metadata", "artist=Abdalla Bushnaq", //
-						"-metadata", "album_artist=Abdalla Bushnaq", //
-						"-metadata", "composer=Abdalla Bushnaq", //
+						"-metadata", "artist=" + artist, //
+						"-metadata", "album_artist=" + albumArtist, //
+						"-metadata", "composer=" + composer, //
 						"-metadata", "album=" + song.album.getName(), //
 						"-metadata", "year=\"" + releaseDate.get(Calendar.YEAR) + "\"", //
 						"-metadata", "track=" + song.track, //

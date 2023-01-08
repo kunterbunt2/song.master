@@ -11,7 +11,7 @@ public class Main {
 	private Context		context;
 //	private final Logger	logger	= LoggerFactory.getLogger(this.getClass());
 	@Autowired
-	private SongMaster	main;
+	private SongMaster	songMaster;
 
 	/**
 	 * bean
@@ -23,7 +23,7 @@ public class Main {
 	public void start(String[] args) throws Exception {
 		context.getParameterOptions().start(args);
 
-		main.start();
+		songMaster.start();
 	}
 
 }

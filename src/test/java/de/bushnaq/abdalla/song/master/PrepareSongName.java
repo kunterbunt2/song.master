@@ -3,10 +3,17 @@ package de.bushnaq.abdalla.song.master;
 import java.io.File;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import de.bushnaq.abdalla.song.master.util.Util;
 
+@SpringBootTest
+@ContextConfiguration(classes = Application.class)
 public class PrepareSongName {
+	@Value("${song.master.filter.directory}")
+	private String filterDirectory;
 
 	private void prepareExtension(String folder, String exclude, String extension) throws Exception {
 		File[] allFiles = Util.queryAllFiles(folder, exclude, extension);
@@ -27,7 +34,7 @@ public class PrepareSongName {
 	@Test
 	public void test() throws Exception {
 		String folder = "C:/data/abdalla.bushnaq.de/sites/fileadmin/audio/12-The_White_Elefant";
-		prepareExtension(folder, "00-The_Lost_Tapes", ".mp3");
+		prepareExtension(folder, filterDirectory, ".mp3");
 		prepareExtension(folder, "", ".wav");
 		prepareExtension(folder, "", ".png");
 	}

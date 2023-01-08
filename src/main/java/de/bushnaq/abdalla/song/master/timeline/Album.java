@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class Album extends MyPeriod {
+public class Album extends TimePeriod {
 	public Color		color;
 	public int			id;
 	public List<Song>	list						= new ArrayList<>();

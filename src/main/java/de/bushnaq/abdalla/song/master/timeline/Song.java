@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 import de.bushnaq.abdalla.song.master.util.Util;
 
-public class Song extends MyPeriod {
+public class Song extends TimePeriod {
 	public Album	album;
 	public String	genre;
 	public String	name;

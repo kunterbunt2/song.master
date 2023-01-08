@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,8 @@ public class SongMaster {
 	private AlbumList	albumList	= new AlbumList();
 	@Value("${song.master.audio.directory}")
 	private String		audioDirectory;
+	@Value("${song.master.filter.directory}")
+	private String		filterDirectory;
 	@Value("${song.master.generate.mp4}")
 	private boolean		generateMp4;
 	@Value("${song.master.generate.wave.png}")
@@ -31,6 +34,14 @@ public class SongMaster {
 	private String		htmlDirectory;
 	@Value("${song.master.image.directory}")
 	private String		imageDirectory;
+	@Autowired
+	Mp3					mp3;
+	@Autowired
+	Mp4					mp4;
+	@Autowired
+	Timeline			timeline;
+	@Autowired
+	WavePng				wavePng;
 
 	public Map<String, String> generateMap(String directory, String exclude, String extension) {
 		Map<String, String>	songMap		= new HashMap<>();
@@ -45,37 +56,37 @@ public class SongMaster {
 	}
 
 	public Map<String, String> generateMp3Map(String directory) {
-		return generateMap(directory, "00-The_Lost_Tapes", ".mp3");
+		return generateMap(directory, filterDirectory, ".mp3");
 	}
 
 	public Map<String, String> generateWaveMap(String directory) {
 		return generateMap(directory, "", ".wav");
 	}
 
-	private void handleAllSongs(String audioDirectory) throws Exception {
+	private void handleAllSongs() throws Exception {
 		albumList.sort(Comparator.comparing(Album::getName));
 		for (Album album : albumList) {
 			for (Song song : album.list) {
 //				if (album.name.equals("01-Recreation of a knowledge seeking mind"))
-				handleSong(audioDirectory, song);
+				handleSong(song);
 			}
 		}
 	}
 
-	private void handleSong(String audioDirectory, Song song) throws Exception {
+	private void handleSong(Song song) throws Exception {
 		song.logMessage("");
 		if (handleMp3)
-			new Mp3(audioDirectory).updateMp3(song);
+			mp3.updateMp3(song);
 		if (generateWavePng)
-			new WavePng(audioDirectory).generate(song);
+			wavePng.generate(song);
 		if (generateMp4)
-			new Mp4(audioDirectory).generate(song);
+			mp4.generate(song);
 	}
 
 	void start() throws Exception {
-		testAllSongsInAlbumeListExistOnHdd(audioDirectory);
-		testAllSongsOnHddExistInAlbumList(audioDirectory);
-		handleAllSongs(audioDirectory);
+		testAllSongsInAlbumeListExistOnHdd();
+		testAllSongsOnHddExistInAlbumList();
+		handleAllSongs();
 
 		{
 			System.out.println("/*-----------------------------------------------------------------");
@@ -83,23 +94,23 @@ public class SongMaster {
 			System.out.println("-----------------------------------------------------------------*/");
 			{
 				// all songs in one map
-				Timeline timeline = new Timeline();
+//				Timeline timeline = new Timeline();
 				timeline.generateMetaAlbumMap(htmlDirectory, imageDirectory);
 			}
 			{
 				// all albums in one map
-				Timeline timeline = new Timeline();
+//				Timeline timeline = new Timeline();
 				timeline.generateAlbumMap(htmlDirectory, imageDirectory);
 			}
 			for (Album album : albumList) {
 				// all songs of one album
-				Timeline	timeline	= new Timeline();
-				String		albumName	= album.name;
-				String		subName		= album.subname;
+//				Timeline	timeline	= new Timeline();
+				String	albumName	= album.name;
+				String	subName		= album.subname;
 				timeline.generateSongMaps(album, audioDirectory, albumName, subName, htmlDirectory, imageDirectory);
 			}
 			{
-				Timeline timeline = new Timeline();
+//				Timeline timeline = new Timeline();
 				timeline.generateStatistics(audioDirectory);
 			}
 			CommandExecuter.close();
@@ -113,7 +124,7 @@ public class SongMaster {
 	 * @param audioDirectory
 	 * @throws Exception
 	 */
-	private void testAllSongsInAlbumeListExistOnHdd(String audioDirectory) throws Exception {
+	private void testAllSongsInAlbumeListExistOnHdd() throws Exception {
 		{
 //			System.out.println("/*-----------------------------------------------------------------");
 			System.out.println("test if all songs in the album list exist on HDD");
@@ -158,14 +169,14 @@ public class SongMaster {
 	 * @param audioDirectory
 	 * @throws Exception
 	 */
-	private void testAllSongsOnHddExistInAlbumList(String audioDirectory) throws Exception {
+	private void testAllSongsOnHddExistInAlbumList() throws Exception {
 		{
 //			System.out.println("/*-----------------------------------------------------------------");
 			System.out.println("test if songs on HDD exist in the album list");
 //			System.out.println("-----------------------------------------------------------------*/");
 
 			Map<String, String>	albumListMap	= albumList.generateMap();
-			File[]				allFiles		= Util.queryAllFiles(audioDirectory, "00-The_Lost_Tapes", ".mp3");
+			File[]				allFiles		= Util.queryAllFiles(audioDirectory, filterDirectory, ".mp3");
 			for (int i = 0; i < allFiles.length; i++) {
 				File	file		= allFiles[i];
 				String	songName	= file.getName();

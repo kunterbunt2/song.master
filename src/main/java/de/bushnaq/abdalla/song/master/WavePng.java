@@ -2,14 +2,20 @@ package de.bushnaq.abdalla.song.master;
 
 import java.io.File;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import de.bushnaq.abdalla.song.master.timeline.Song;
 
+@Component
+@Scope("prototype")
 public class WavePng {
 
+	@Value("${song.master.audio.directory}")
 	private String audioDirectory;
 
-	public WavePng(String audioDirectory) {
-		this.audioDirectory = audioDirectory;
+	public WavePng() {
 	}
 
 	public void generate(Song song) throws Exception {

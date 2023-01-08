@@ -13,3 +13,4 @@ buildNumber.properties
 .classpath
 .project
 /song.master.log
+/*.gz
