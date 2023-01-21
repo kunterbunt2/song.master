@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.CubicCurve2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -290,8 +291,20 @@ public class Timeline {
 			success = false;
 
 		if (!testRun) {
+			// connect song to calendar release day
 			graphics.setColor(Color.LIGHT_GRAY);
-			graphics.drawLine(x, y, x + SONG_DISTANCE - 2, song.y);
+			{
+				float	x1		= x;
+				float	y1		= y;
+				float	ctrlx1	= x1 + SONG_DISTANCE / 2;
+				float	ctrly1	= y1;
+				float	x2		= x + SONG_DISTANCE - 2;
+				float	y2		= song.y;
+				float	ctrlx2	= x2 - SONG_DISTANCE / 2;
+				float	ctrly2	= y2;
+				graphics.draw(new CubicCurve2D.Float(x1, y1, ctrlx1, ctrly1, ctrlx2, ctrly2, x2, y2));
+			}
+			// draw song name
 			graphics.setColor(color/* song.album.color */);
 			graphics.drawString(_marker, _x, song.y + songHeight / 2 - 2);
 			// map
