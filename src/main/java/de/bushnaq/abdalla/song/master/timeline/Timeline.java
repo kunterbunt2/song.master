@@ -187,13 +187,18 @@ public class Timeline {
 		thisMonth.setTime(album.firstEnd);
 //		Date d = thisMonth.getTime();
 		thisMonth.set(Calendar.DAY_OF_MONTH, 1);
+		boolean weDrewOneYear = false;
 		for (; thisMonth.getTime().before(album.end); thisMonth.add(Calendar.MONTH, 1)) {
-			int delta = zoom((thisMonth.getTimeInMillis() - album.firstEnd.getTime()) / ONE_DAY_MILLIS);
 			if (thisMonth.get(Calendar.MONTH) == 0) {
-				String _marker = String.valueOf(thisMonth.get(Calendar.YEAR));
-				drawYear(x - 20, y - delta + 10 - zoom(ONE_MONTH_MILLLI_SECONDS / ONE_DAY_MILLIS) / 2, _marker);
+				drawYear(album, x, y, thisMonth);
+				weDrewOneYear = true;
 			}
-			drawMonth(x, y - delta - zoom(ONE_MONTH_MILLLI_SECONDS / ONE_DAY_MILLIS) / 2, thisMonth);
+			drawMonth(album, x, y, thisMonth);
+		}
+		if (!weDrewOneYear) {
+			// we should draw at least one year to indicate where we are
+			thisMonth.setTime(album.firstEnd);
+			drawYear(album, x, y, thisMonth);
 		}
 	}
 
@@ -226,6 +231,11 @@ public class Timeline {
 				drawYear(x - 20, y - delta + 10 - zoom(ONE_MONTH_MILLLI_SECONDS / ONE_DAY_MILLIS) / 2, _marker);
 			}
 		}
+	}
+
+	private void drawMonth(Album album, int x, int y, Calendar thisMonth) {
+		int delta = zoom((thisMonth.getTimeInMillis() - album.firstEnd.getTime()) / ONE_DAY_MILLIS);
+		drawMonth(x, y - delta - zoom(ONE_MONTH_MILLLI_SECONDS / ONE_DAY_MILLIS) / 2, thisMonth);
 	}
 
 	private void drawMonth(int x, int y, Calendar thisMonth) {
@@ -348,6 +358,12 @@ public class Timeline {
 				result = false;
 		}
 		return result;
+	}
+
+	private void drawYear(Album album, int x, int y, Calendar thisMonth) {
+		int		delta	= zoom((thisMonth.getTimeInMillis() - album.firstEnd.getTime()) / ONE_DAY_MILLIS);
+		String	_marker	= String.valueOf(thisMonth.get(Calendar.YEAR));
+		drawYear(x - 20, y - delta + 10 - zoom(ONE_MONTH_MILLLI_SECONDS / ONE_DAY_MILLIS) / 2, _marker);
 	}
 
 	private void drawYear(int x, int y, String _marker) {
