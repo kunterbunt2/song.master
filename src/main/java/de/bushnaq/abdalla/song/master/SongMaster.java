@@ -94,23 +94,19 @@ public class SongMaster {
 			System.out.println("-----------------------------------------------------------------*/");
 			{
 				// all songs in one map
-//				Timeline timeline = new Timeline();
 				timeline.generateMetaAlbumMap(htmlDirectory, imageDirectory);
 			}
 			{
 				// all albums in one map
-//				Timeline timeline = new Timeline();
 				timeline.generateAlbumMap(htmlDirectory, imageDirectory);
 			}
 			for (Album album : albumList) {
 				// all songs of one album
-//				Timeline	timeline	= new Timeline();
 				String	albumName	= album.name;
 				String	subName		= album.subname;
 				timeline.generateSongMaps(album, audioDirectory, albumName, subName, htmlDirectory, imageDirectory);
 			}
 			{
-//				Timeline timeline = new Timeline();
 				timeline.generateStatistics(audioDirectory);
 			}
 			CommandExecuter.close();
@@ -131,7 +127,6 @@ public class SongMaster {
 //			System.out.println("-----------------------------------------------------------------*/");
 //			Map<String, String>	wavMap	= generateWaveMap(audioDirectory);
 			Map<String, String> mp3Map = generateMp3Map(audioDirectory);
-//			String				root	= audioDirectory;
 			albumList.sort(Comparator.comparing(Album::getName));
 			for (Album album : albumList) {
 				String albumName = album.name;

@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * class to read stdin or stderr for running thread. used by CommandExecuter.java
+ *
+ * @author abdalla
+ *
+ */
 class StdxReader extends Thread {
 	private BufferedReader	ibr;
 	private boolean			useStderr;
